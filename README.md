@@ -26,15 +26,22 @@ python -m pytest tests/ -q     # suite de tests (20 tests, 100 % hors ligne)
 python -m interface.demo       # smoke test : scénario RH avant/après protection
 ```
 
-## Architecture du moteur (3 couches + décision)
+## Architecture du moteur (normalisation + 3 couches + décision)
 
 | Couche | Fichier | Rôle | Réseau |
 |---|---|---|---|
 | **Capture d'intention** | `middleware/intent_capture.py` | Extrait et verrouille l'empreinte (action, destinataires, périmètre) en début de session | Groq (fallback heuristique hors ligne) |
+| **Prétraitement — Dé-obfuscation** | `middleware/text_normalizer.py` | Neutralise les évasions (caractères invisibles, homoglyphes cyrillique/grec, tags Unicode, pleine largeur, espacement lettre-à-lettre) avant analyse, et signale l'obfuscation comme suspecte | Non |
 | **Couche 0 — Garde d'empreinte** | `middleware/fingerprint_guard.py` | Comparaison **déterministe** de chaque appel d'outil à l'empreinte (destination inconnue, action hors intention). Signal dominant. | Non |
-| **Couche 1 — Règles** | `middleware/rules_engine.py` + `rules.json` | 10 patterns regex éditables sans code (EF-10) | Non |
-| **Couche 2 — Juge LLM** | `middleware/coherence_checker.py` | Cohérence intention/action via Groq (`llama-3.1-8b-instant`), prompt durci anti-injection. Signal d'appoint, plafonné à 40 pts. | Groq |
-| **Décision** | `middleware/argus.py` | Combine : `score = max(couche0, couche1 + couche2)` → `<30` AUTORISER · `30–70` CONFIRMER · `>70` BLOQUER. Journal JSONL. | — |
+| **Couche 1 — Règles** | `middleware/rules_engine.py` + `rules.json` | 13 patterns regex éditables sans code (EF-10), incluant l'exfiltration par image/URL markdown | Non |
+| **Couche 2 — Juge LLM** | `middleware/coherence_checker.py` | Cohérence intention/action via Groq (`llama-3.1-8b-instant`), prompt durci anti-injection, **résultats mémoïsés** (cache LRU). Signal d'appoint, plafonné à 40 pts. | Groq |
+| **Décision** | `middleware/argus.py` | Combine : `score = max(couche0, couche1 + couche2)` → `<30` AUTORISER · `30–70` CONFIRMER · `>70` BLOQUER. Latence mesurée (`duree_ms`). Journal JSONL. | — |
+
+**Efficacité (benchmark hors ligne, `python -m tests.benchmark`)** : 100 % de
+détection sur les documents piégés (dont un document obfusqué homoglyphes +
+caractères invisibles), 0 % de faux positifs sur les documents sains, latence
+couche 1 ~5 ms (seuil CdC : 3 s). Sans la dé-obfuscation, le document piégé
+obfusqué passait totalement à travers la couche 1.
 
 > Pourquoi la couche 0 domine : TrajAD (arXiv 2602.06443) montre que les
 > LLM-judges zero-shot sont faillibles sur les anomalies de trajectoire — les

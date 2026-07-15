@@ -160,6 +160,41 @@ du CdC (§5) — il est réellement différenciant et il faut le mettre en avant
 
 ---
 
+## 6. Durcissement anti-obfuscation (itération performance/efficacité)
+
+**Problème identifié par la recherche** : les détecteurs par regex (notre couche 1)
+se contournent trivialement. Des travaux 2025-2026 rapportent des taux d'évasion
+jusqu'à ~93 % via des transformations qui préservent le sens pour le LLM mais
+cassent le pattern matching :
+- **caractères invisibles** (zero-width space/joiner, marques bidirectionnelles) ;
+- **caractères « tag » Unicode** (U+E0000–U+E007F) qui smugglent un payload ASCII ;
+- **homoglyphes** (lettres cyrilliques/grecques ressemblant à des latines) ;
+- **pleine largeur / compatibilité** (résolu par NFKC, mais NFKC seul ne traite
+  PAS les homoglyphes — il faut un pipeline combiné) ;
+- **espacement lettre-à-lettre** et **blobs encodés** (base64/hex).
+
+**Décision** : ajout d'un étage de **normalisation** (`text_normalizer.py`) en
+amont de la couche 1. Il dé-obfusque le texte avant le matching ET traite
+l'obfuscation elle-même comme un signal (poids 20) — un document légitime n'a
+aucune raison de cacher du texte à un humain. Résultat mesuré : le document piégé
+`reunion_obfusque.txt` (« ignore » en cyrillique + zero-width) passait à 0 règle
+sans normalisation, il déclenche R01/R03/R04/R05/R06 avec.
+
+**Garde-fou faux positifs** : l'heuristique d'espacement a d'abord sur-déclenché
+sur le français (mots d'une lettre : « à l'adresse »). Resserrée pour n'agir que
+sur des runs de 4+ lettres isolées. Benchmark final : 100 % détection, 0 % FP.
+
+**Performance** : cache LRU sur le juge LLM (couche 2) — un appel identique
+(démo rejouée, boucle ReAct qui retente) ne recontacte pas Groq ; mesure de
+latence (`Decision.duree_ms`) pour vérifier le seuil 3 s du CdC.
+
+**Sources obfuscation** :
+- 12 ways attackers bypass PI scanners — https://dev.to/joergmichno/12-ways-attackers-bypass-prompt-injection-scanners-we-built-defenses-for-all-of-them-506k
+- Invisible prompt injection (Unicode caché) — https://ctx-guard.com/blog/invisible-prompt-injection
+- Homoglyphes & zero-width, détection — https://dev.to/meghal_parikh_b8c5c6e3244/detecting-unicode-homoglyph-and-zero-width-character-evasion-in-llm-prompt-injection-attacks-1e69
+- Outsmarting AI guardrails (Mindgard) — https://mindgard.ai/blog/outsmarting-ai-guardrails-with-invisible-characters-and-adversarial-prompts
+- NFKC ≠ confusables — https://paultendo.github.io/posts/confusable-detection-without-nfkc/
+
 ## Sources
 
 - OWASP LLM01:2025 — https://genai.owasp.org/llmrisk/llm01-prompt-injection/

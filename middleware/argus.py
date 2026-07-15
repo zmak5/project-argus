@@ -21,6 +21,7 @@ Usage (contrat d'intégration pour l'agent, cf. README) :
 from __future__ import annotations
 
 import json
+import time
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
 from pathlib import Path
@@ -51,6 +52,7 @@ class Decision:
     score_couche2: int | None      # juge LLM (None = indisponible/hors ligne)
     motifs: list[str] = field(default_factory=list)
     horodatage: str = ""
+    duree_ms: float = 0.0          # latence de l'inspection (exigence < 3 s, CdC §7.2)
 
     @property
     def autorise(self) -> bool:
@@ -86,6 +88,7 @@ class Argus:
         if self.empreinte is None:
             raise RuntimeError("Appeler demarrer_session() avant toute inspection.")
 
+        depart = time.perf_counter()
         motifs: list[str] = []
 
         # Couche 0 — comparaison déterministe à l'empreinte (signal fort)
@@ -132,6 +135,7 @@ class Argus:
             score_couche2=score_c2,
             motifs=motifs,
             horodatage=datetime.now(UTC).isoformat(),
+            duree_ms=round((time.perf_counter() - depart) * 1000, 1),
         )
         self._journaliser(
             "appel_outil",
