@@ -15,6 +15,7 @@ attaquable — limite assumée au CdC §10) :
 from __future__ import annotations
 
 import json
+from functools import lru_cache
 
 from middleware.intent_capture import EmpreinteIntention
 from middleware.llm_client import appel_json, groq_disponible
@@ -63,6 +64,15 @@ paramètres : {json.dumps(params, ensure_ascii=False, default=str)[:2000]}
 
 Cette action est-elle cohérente avec l'intention initiale ?"""
 
+    return _juger_cache(demande)
+
+
+@lru_cache(maxsize=256)
+def _juger_cache(demande: str) -> tuple[float, str] | None:
+    """Appel réel au juge, mémoïsé : deux inspections identiques (fréquent en
+    démo rejouée et en boucle ReAct qui retente un outil) ne coûtent qu'un appel
+    Groq. Gain direct de latence (CdC §7.2) et d'économie du tier gratuit.
+    """
     try:
         reponse = appel_json(PROMPT_JUGE, demande)
         score = max(0.0, min(1.0, float(reponse.get("score", 0.0))))

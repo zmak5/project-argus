@@ -70,6 +70,27 @@
       "description": "Instructions dissimulées dans un commentaire HTML/Markdown invisible au rendu",
       "pattern": "<!--.{0,200}(assistant|\\bia\\b|\\bai\\b|système|system|prompt).{0,500}-->",
       "poids": 25
+    },
+    {
+      "id": "R11",
+      "nom": "exfiltration_image_markdown",
+      "description": "Image markdown vers un domaine externe : canal d'exfiltration silencieux (données en query string)",
+      "pattern": "!\\[[^\\]]*\\]\\(\\s*https?://[^)]*[?&=][^)]*\\)",
+      "poids": 35
+    },
+    {
+      "id": "R12",
+      "nom": "exfiltration_url_parametree",
+      "description": "Invitation à construire/suivre une URL avec des données en paramètre (side-channel de clic)",
+      "pattern": "(https?://[\\w.-]+/[^\\s]*[?&](data|q|payload|content|leak|info)=|(clique|visite|ouvre|rends-toi|fetch|récupère|charge)[^.]{0,40}https?://)",
+      "poids": 30
+    },
+    {
+      "id": "R13",
+      "nom": "instruction_encodee",
+      "description": "Demande de décoder puis d'exécuter un contenu encodé (base64, hex, rot13)",
+      "pattern": "(décode|decode|déchiffre|base64|rot13|en hexadécimal|from ?base64)[^.]{0,40}(puis|then|et (exécute|suis|applique)|and (execute|follow))",
+      "poids": 35
     }
   ]
 }
