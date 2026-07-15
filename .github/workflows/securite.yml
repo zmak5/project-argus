@@ -1,0 +1,45 @@
+# Sécurité du dépôt — projet de sécurité oblige, on s'applique à nous-mêmes
+# ce qu'on prêche (CdC §7.2 : jamais de clé API commitée).
+#
+# 1. gitleaks  : scan de secrets sur TOUT l'historique git (clés Groq, tokens…)
+# 2. pip-audit : vulnérabilités connues (CVE) dans les dépendances Python
+
+name: Sécurité
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  schedule:
+    # Tous les lundis à 06h00 UTC : de nouvelles CVE sortent en continu,
+    # un dépôt qui ne bouge pas peut devenir vulnérable sans aucun commit.
+    - cron: "0 6 * * 1"
+
+permissions:
+  contents: read
+
+jobs:
+  secrets:
+    name: Scan de secrets (gitleaks)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # historique complet : un secret commité puis "supprimé" reste dans git
+      - uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  dependances:
+    name: Audit des dépendances (pip-audit)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+      - name: Installer pip-audit
+        run: pip install pip-audit
+      - name: Auditer requirements.txt
+        run: pip-audit -r requirements.txt --strict
