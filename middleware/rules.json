@@ -1,0 +1,75 @@
+{
+  "_commentaire": "Couche 1 d'Argus — patterns de détection éditables sans toucher au code (EF-10). Chaque règle : id, nom, description, pattern (regex, insensible à la casse, DOTALL), poids (contribution au score 0-100, plafonnée à 50 au total).",
+  "regles": [
+    {
+      "id": "R01",
+      "nom": "annulation_instructions",
+      "description": "Tentative d'annuler les instructions précédentes de l'agent",
+      "pattern": "(ignore[zr]?|disregard|oublie[zr]?|forget)\\s+.{0,30}(instructions?|consignes?|directives?|previous|prior)",
+      "poids": 40
+    },
+    {
+      "id": "R02",
+      "nom": "redefinition_role",
+      "description": "Tentative de redéfinir le rôle ou le mode de l'agent",
+      "pattern": "(tu es (maintenant|désormais)|vous êtes (maintenant|désormais)|you are now|nouveau rôle|new role|act as|agis (en tant que|comme)|mode (maintenance|développeur|developer|debug|admin))",
+      "poids": 35
+    },
+    {
+      "id": "R03",
+      "nom": "faux_contexte_systeme",
+      "description": "Fausses balises système imitant un message de l'orchestrateur",
+      "pattern": "(\\[\\s*syst[eè]me?\\s*\\]|<\\|?\\s*system\\s*\\|?>|###\\s*(system|instruction)|\\[\\s*system\\s*\\])",
+      "poids": 35
+    },
+    {
+      "id": "R04",
+      "nom": "divulgation_interne",
+      "description": "Demande de divulgation du prompt système, des clés ou de la configuration",
+      "pattern": "(révèle[zr]?|divulgue[zr]?|affiche[zr]?|montre[zr]?|imprime[zr]?|reveal|show|print|display)\\s+.{0,60}(prompt|instructions? système|system prompt|configuration|clés?\\b|api[ _-]?keys?|liste de tes outils|tes outils)",
+      "poids": 40
+    },
+    {
+      "id": "R05",
+      "nom": "injonction_envoi",
+      "description": "Ordre d'envoi/transfert adressé à l'agent avec une destination explicite",
+      "pattern": "(envoie[zr]?|transmets?|transfère[zr]?|forward|send)\\s+.{0,80}(@|adresse|compte\\s*#?\\d|account)",
+      "poids": 30
+    },
+    {
+      "id": "R06",
+      "nom": "dissimulation",
+      "description": "Demande de cacher l'action à l'utilisateur légitime",
+      "pattern": "(sans (le\\s+)?(mentionner|informer|prévenir)|ne pas (informer|prévenir|mentionner|signaler)|ne (le\\s+)?(dis|mentionne|signale)\\s+(pas|rien)|do not (tell|mention|inform)|secretly|discrète(ment)?)",
+      "poids": 35
+    },
+    {
+      "id": "R07",
+      "nom": "detournement_tache",
+      "description": "Substitution de la tâche initiale par une nouvelle tâche",
+      "pattern": "(nouvelle (tâche|mission) prioritaire|au lieu de (répondre|cela|ça|ta tâche)|instead of|oublie ta (tâche|mission)|puis reprends ta tâche)",
+      "poids": 30
+    },
+    {
+      "id": "R08",
+      "nom": "adresse_directe_ia",
+      "description": "Contenu qui s'adresse explicitement à l'assistant IA qui le lit",
+      "pattern": "(note pour l.assistant|pour l.assistant (ia|ai)|to the ai assistant|if you are an ai|si tu es une (ia|ai)|assistant (ia|ai) qui lit)",
+      "poids": 35
+    },
+    {
+      "id": "R09",
+      "nom": "pression_priorite",
+      "description": "Marqueurs de fausse priorité/urgence pour forcer l'exécution",
+      "pattern": "(instruction prioritaire|priorité absolue|override|urgent\\s*[:!].{0,40}(exécute|immédiatement))",
+      "poids": 25
+    },
+    {
+      "id": "R10",
+      "nom": "commentaire_cache",
+      "description": "Instructions dissimulées dans un commentaire HTML/Markdown invisible au rendu",
+      "pattern": "<!--.{0,200}(assistant|\\bia\\b|\\bai\\b|système|system|prompt).{0,500}-->",
+      "poids": 25
+    }
+  ]
+}

@@ -1,0 +1,7 @@
+groq>=0.11
+python-dotenv>=1.0
+rich>=13.0
+pytest>=8.0
+# Pour l'interface web (optionnel, au choix du binôme — cf. CdC §8) :
+# flask>=3.0
+# flask-socketio>=5.0

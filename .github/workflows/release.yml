@@ -1,0 +1,45 @@
+# Livraison continue — release GitHub automatique sur tag de version.
+#
+# Usage :   git tag v0.1.0 && git push origin v0.1.0
+# Effet :   tests complets → archive du code → release GitHub avec notes
+#           générées depuis les commits/PR mergées depuis le tag précédent.
+
+name: Release
+
+on:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: write  # nécessaire pour créer la release
+
+jobs:
+  release:
+    name: Tests puis publication
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+          cache: pip
+
+      # On ne publie jamais une version dont les tests ne passent pas.
+      - name: Installer les dépendances
+        run: pip install -r requirements-dev.txt
+      - name: Lint
+        run: ruff check .
+      - name: Tests + couverture
+        run: python -m pytest tests/ --cov
+
+      - name: Construire l'archive source
+        run: |
+          mkdir -p dist
+          git archive --format=zip --output "dist/argus-${GITHUB_REF_NAME}.zip" HEAD
+
+      - name: Créer la release GitHub
+        uses: softprops/action-gh-release@v2
+        with:
+          files: dist/*.zip
+          generate_release_notes: true

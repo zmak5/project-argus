@@ -1,0 +1,31 @@
+[project]
+name = "argus-middleware"
+version = "0.1.0"
+description = "Middleware de surveillance comportementale pour agents IA — détection d'injection de prompt par analyse de trajectoire"
+requires-python = ">=3.11"
+
+# ----------------------------------------------------------------- lint (ruff)
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+
+[tool.ruff.lint]
+# E/W : pycodestyle · F : pyflakes · I : tri des imports · B : bugbear (pièges
+# courants) · UP : modernisation syntaxe · SIM : simplifications
+select = ["E", "W", "F", "I", "B", "UP", "SIM"]
+
+# ---------------------------------------------------------------------- tests
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"
+
+[tool.coverage.run]
+source = ["middleware"]
+
+[tool.coverage.report]
+# Le moteur (ta partie) doit rester bien couvert ; les branches "en ligne"
+# (appels Groq réels) ne sont pas testables en CI sans clé — d'où 80 et pas 95.
+fail_under = 80
+show_missing = true

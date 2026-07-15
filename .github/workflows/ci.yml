@@ -1,0 +1,63 @@
+# Intégration continue — lint + tests + couverture
+# Se déclenche sur chaque push et chaque pull request vers main.
+# Les tests sont 100 % hors ligne : aucune clé GROQ_API_KEY n'est requise en CI.
+
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+# Annule les runs devenus obsolètes quand on repousse sur la même branche
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  lint:
+    name: Lint (ruff)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+      - name: Installer ruff
+        run: pip install ruff
+      - name: Vérifier le style et les erreurs
+        run: ruff check .
+      - name: Vérifier le formatage des imports
+        run: ruff check --select I .
+
+  tests:
+    name: Tests (${{ matrix.os }} / Python ${{ matrix.python }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest]
+        python: ["3.11", "3.12", "3.13"]
+        include:
+          # L'équipe développe sous Windows : on garde un job Windows pour
+          # attraper les problèmes d'encodage console (cp1252) déjà rencontrés.
+          - os: windows-latest
+            python: "3.13"
+    env:
+      PYTHONUTF8: "1"  # évite les surprises cp1252 sur le runner Windows
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python }}
+          cache: pip
+      - name: Installer les dépendances
+        run: pip install -r requirements-dev.txt
+      - name: Tests + couverture (seuil 80 % sur middleware/)
+        run: python -m pytest tests/ --cov --cov-report=term
+      - name: Smoke test de la démo (sans LLM)
+        run: python -m interface.demo
