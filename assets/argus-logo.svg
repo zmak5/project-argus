@@ -1,57 +1,11 @@
-<svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Argus">
-  <title>Argus — surveillance comportementale pour agents IA</title>
-  <defs>
-    <radialGradient id="fond" cx="50%" cy="42%" r="70%">
-      <stop offset="0%" stop-color="#132A4A"/>
-      <stop offset="100%" stop-color="#0A1626"/>
-    </radialGradient>
-    <linearGradient id="iris" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0%" stop-color="#22D3EE"/>
-      <stop offset="100%" stop-color="#0EA5B7"/>
-    </linearGradient>
-  </defs>
-
-  <!-- Disque de fond -->
-  <circle cx="256" cy="256" r="248" fill="url(#fond)" stroke="#22D3EE" stroke-width="4" stroke-opacity="0.35"/>
-
-  <!-- Couronne des "cent yeux" : petits points de veille tout autour (panoptique) -->
-  <g fill="#22D3EE" fill-opacity="0.55">
-    <circle cx="256" cy="70"  r="6"/>
-    <circle cx="349" cy="95"  r="5"/>
-    <circle cx="417" cy="163" r="6"/>
-    <circle cx="442" cy="256" r="5"/>
-    <circle cx="417" cy="349" r="6"/>
-    <circle cx="349" cy="417" r="5"/>
-    <circle cx="256" cy="442" r="6"/>
-    <circle cx="163" cy="417" r="5"/>
-    <circle cx="95"  cy="349" r="6"/>
-    <circle cx="70"  cy="256" r="5"/>
-    <circle cx="95"  cy="163" r="6"/>
-    <circle cx="163" cy="95"  r="5"/>
-  </g>
-
-  <!-- Œil-sentinelle : amande -->
-  <path d="M 96 256 Q 256 136 416 256 Q 256 376 96 256 Z"
-        fill="#0A1626" stroke="#7DD3FC" stroke-width="10" stroke-linejoin="round"/>
-
-  <!-- Iris = bouclier (anneaux concentriques) -->
-  <circle cx="256" cy="256" r="74" fill="url(#iris)"/>
-  <circle cx="256" cy="256" r="74" fill="none" stroke="#0A1626" stroke-width="6" stroke-opacity="0.25"/>
-  <circle cx="256" cy="256" r="50" fill="none" stroke="#0A1626" stroke-width="7" stroke-opacity="0.35"/>
-
-  <!-- Pupille -->
-  <circle cx="256" cy="256" r="26" fill="#0A1626"/>
-  <!-- Reflet doré : la vigilance -->
-  <circle cx="242" cy="242" r="9" fill="#F5C451"/>
-
-  <!-- Trajectoire surveillée : ligne en pointillés qui traverse l'œil... -->
-  <path d="M 96 256 H 200" stroke="#7DD3FC" stroke-width="6" stroke-linecap="round" stroke-dasharray="2 16" opacity="0.8"/>
-  <path d="M 312 256 H 416" stroke="#7DD3FC" stroke-width="6" stroke-linecap="round" stroke-dasharray="2 16" opacity="0.8"/>
-
-  <!-- ...une branche qui dévie et se fait bloquer (le blocage d'Argus) -->
-  <path d="M 360 256 L 404 212" stroke="#F4739A" stroke-width="6" stroke-linecap="round" stroke-dasharray="2 14"/>
-  <g stroke="#F4739A" stroke-width="7" stroke-linecap="round">
-    <line x1="396" y1="196" x2="420" y2="220"/>
-    <line x1="420" y1="196" x2="396" y2="220"/>
-  </g>
+<svg viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Argus"><title>Argus</title>
+<g stroke="#0A1424" stroke-width="7" stroke-linecap="round" stroke-dasharray="1 17"><line x1="256" y1="106" x2="256" y2="24"/><line x1="256" y1="406" x2="256" y2="488"/><line x1="406" y1="256" x2="488" y2="256"/><line x1="106" y1="256" x2="24" y2="256"/><line x1="150" y1="150" x2="92" y2="92"/><line x1="150" y1="362" x2="92" y2="424"/><line x1="362" y1="362" x2="424" y2="424"/></g>
+<g stroke="#E84C7F" stroke-width="7" stroke-linecap="round" stroke-dasharray="1 15"><line x1="362" y1="150" x2="416" y2="96"/></g>
+<g stroke="#E84C7F" stroke-width="8" stroke-linecap="round"><line x1="414" y1="74" x2="438" y2="98"/><line x1="438" y1="74" x2="414" y2="98"/></g>
+<g transform="translate(181 126)"><path d="M -13 0 Q 0 -8 13 0 Q 0 8 -13 0 Z" fill="none" stroke="#0A1424" stroke-width="3.5"/><circle r="3.3" fill="#0A1424"/></g><g transform="translate(217 111)"><path d="M -13 0 Q 0 -8 13 0 Q 0 8 -13 0 Z" fill="none" stroke="#0A1424" stroke-width="3.5"/><circle r="3.3" fill="#0A1424"/></g><g transform="translate(256 106)"><path d="M -13 0 Q 0 -8 13 0 Q 0 8 -13 0 Z" fill="none" stroke="#0A1424" stroke-width="3.5"/><circle r="3.3" fill="#0A1424"/></g><g transform="translate(295 111)"><path d="M -13 0 Q 0 -8 13 0 Q 0 8 -13 0 Z" fill="none" stroke="#0A1424" stroke-width="3.5"/><circle r="3.3" fill="#0A1424"/></g><g transform="translate(331 126)"><path d="M -13 0 Q 0 -8 13 0 Q 0 8 -13 0 Z" fill="none" stroke="#0A1424" stroke-width="3.5"/><circle r="3.3" fill="#0A1424"/></g><g transform="translate(331 386)"><path d="M -13 0 Q 0 -8 13 0 Q 0 8 -13 0 Z" fill="none" stroke="#0A1424" stroke-width="3.5"/><circle r="3.3" fill="#0A1424"/></g><g transform="translate(295 401)"><path d="M -13 0 Q 0 -8 13 0 Q 0 8 -13 0 Z" fill="none" stroke="#0A1424" stroke-width="3.5"/><circle r="3.3" fill="#0A1424"/></g><g transform="translate(256 406)"><path d="M -13 0 Q 0 -8 13 0 Q 0 8 -13 0 Z" fill="none" stroke="#0A1424" stroke-width="3.5"/><circle r="3.3" fill="#0A1424"/></g><g transform="translate(217 401)"><path d="M -13 0 Q 0 -8 13 0 Q 0 8 -13 0 Z" fill="none" stroke="#0A1424" stroke-width="3.5"/><circle r="3.3" fill="#0A1424"/></g><g transform="translate(181 386)"><path d="M -13 0 Q 0 -8 13 0 Q 0 8 -13 0 Z" fill="none" stroke="#0A1424" stroke-width="3.5"/><circle r="3.3" fill="#0A1424"/></g>
+<path d="M 120 256 Q 256 150 392 256" fill="none" stroke="#0A1424" stroke-width="20" stroke-linecap="round"/>
+<path d="M 120 256 Q 256 362 392 256" fill="none" stroke="#0A1424" stroke-width="20" stroke-linecap="round"/>
+<circle cx="256" cy="256" r="58" fill="none" stroke="#0A1424" stroke-width="8"/>
+<g stroke="#0A1424" stroke-width="6" stroke-linecap="round"><line x1="292" y1="256" x2="270" y2="269" transform="rotate(0 256 256)"/><line x1="292" y1="256" x2="270" y2="269" transform="rotate(60 256 256)"/><line x1="292" y1="256" x2="270" y2="269" transform="rotate(120 256 256)"/><line x1="292" y1="256" x2="270" y2="269" transform="rotate(180 256 256)"/><line x1="292" y1="256" x2="270" y2="269" transform="rotate(240 256 256)"/><line x1="292" y1="256" x2="270" y2="269" transform="rotate(300 256 256)"/></g>
+<polygon points="276,256 266,273 246,273 236,256 246,239 266,239" fill="#0A1424"/>
 </svg>

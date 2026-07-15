@@ -1,7 +1,14 @@
-# ARGUS — Middleware de surveillance comportementale pour agents IA
+<p align="center">
+  <img src="assets/logo.png" alt="Argus" width="240">
+</p>
 
-[![CI](https://github.com/zmak5/project-argus/actions/workflows/ci.yml/badge.svg)](https://github.com/zmak5/project-argus/actions/workflows/ci.yml)
-[![Sécurité](https://github.com/zmak5/project-argus/actions/workflows/securite.yml/badge.svg)](https://github.com/zmak5/project-argus/actions/workflows/securite.yml)
+<h1 align="center">ARGUS</h1>
+<p align="center"><em>Middleware de surveillance comportementale pour agents IA</em></p>
+
+<p align="center">
+  <a href="https://github.com/zmak5/project-argus/actions/workflows/ci.yml"><img src="https://github.com/zmak5/project-argus/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
+  <a href="https://github.com/zmak5/project-argus/actions/workflows/securite.yml"><img src="https://github.com/zmak5/project-argus/actions/workflows/securite.yml/badge.svg" alt="Sécurité"></a>
+</p>
 
 Détection d'injection de prompt indirecte par **analyse de trajectoire** : Argus
 verrouille l'intention déclarée par l'utilisateur en début de session
