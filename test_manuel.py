@@ -1,10 +1,11 @@
 """Script de test manuel — vérifie que agent + middleware se connectent bien."""
 
 from dotenv import load_dotenv
-load_dotenv()
 
 from agent.agent import executer_session
 from middleware.argus import Argus
+
+load_dotenv()
 
 argus = Argus(protege=True)
 resultat = executer_session(

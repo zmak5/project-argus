@@ -6,7 +6,6 @@ Lancer depuis la racine : python -m interface.demo
 from __future__ import annotations
 
 from dotenv import load_dotenv
-load_dotenv()
 
 from agent.agent import executer_session
 from middleware.argus import Argus
@@ -19,11 +18,15 @@ def afficher_banniere() -> None:
 
 
 def choisir_mode() -> bool:
-    reponse = input("Mode protégé activé ? (o/n) [o par défaut] : ").strip().lower()
+    try:
+        reponse = input("Mode protégé activé ? (o/n) [o par défaut] : ").strip().lower()
+    except EOFError:
+        return True  # pas d'entrée disponible (ex: CI) → mode protégé par défaut
     return reponse != "n"
 
 
 def main() -> None:
+    load_dotenv()
     afficher_banniere()
     protege = choisir_mode()
     print(f"\n>> Mode : {'PROTÉGÉ' if protege else 'NON PROTÉGÉ'}\n")
@@ -31,7 +34,11 @@ def main() -> None:
     argus = Argus(protege=protege)
 
     while True:
-        requete = input("\nVotre requête (ou 'quit' pour sortir) : ").strip()
+        try:
+            requete = input("\nVotre requête (ou 'quit' pour sortir) : ").strip()
+        except EOFError:
+            print("\n[Aucune entrée disponible — fin de la démo]")
+            break
         if requete.lower() in ("quit", "exit"):
             print("Fin de la démo.")
             break

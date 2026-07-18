@@ -84,7 +84,11 @@ def executer_session(requete_utilisateur: str, argus: Argus | None = None) -> st
             messages.append(
                 {
                     "role": "user",
-                    "content": "Ton précédent appel d'outil était invalide. Réponds avec un appel correctement formaté, ou donne ta réponse finale.",
+                    "content": (
+                        "Ton précédent appel d'outil était invalide. "
+                        "Réponds avec un appel correctement formaté, "
+                        "ou donne ta réponse finale."
+                    ),
                 }
             )
             continue
@@ -136,7 +140,8 @@ def executer_session(requete_utilisateur: str, argus: Argus | None = None) -> st
                 verdict_contenu = argus.analyser_contenu_externe(
                     resultat_texte, source=params.get("nom_document", "")
                 )
-                if verdict_contenu.motifs and verdict_contenu.motifs != ["aucun motif suspect dans le contenu"]:
+                motif_par_defaut = ["aucun motif suspect dans le contenu"]
+                if verdict_contenu.motifs and verdict_contenu.motifs != motif_par_defaut:
                     print(f"[ARGUS] Contenu externe suspect détecté : {verdict_contenu.motifs}")
 
             messages.append(
