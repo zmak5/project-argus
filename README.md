@@ -30,7 +30,7 @@ uniquement — suffisant pour les tests et le smoke test.
 
 ```bash
 python -m pytest tests/ -q     # suite de tests (20 tests, 100 % hors ligne)
-python -m interface.demo       # smoke test : scénario RH avant/après protection
+python -m interface.demo       # démo interactive : tapez votre requête, voyez Argus en action
 ```
 
 ## Architecture du moteur (normalisation + 3 couches + décision)
@@ -80,12 +80,12 @@ peut lire ce fichier pour l'affichage en direct.
 
 ## Répartition du binôme
 
-- **Kader — moteur** : tout `middleware/` + `tests/` + documents de test. ✅ Opérationnel.
-- **Coéquipier — agent & interface** : `agent/agent.py` (boucle ReAct Groq avec
-  tool use — squelette documenté en place) et `interface/demo.py` (CLI rich ou
-  Flask — smoke test fourni en attendant). Les outils simulés (`agent/tools.py`)
-  sont déjà écrits. Le middleware étant testé et utilisable hors ligne, les deux
-  parties se développent en parallèle sans se bloquer.
+- **Sawadogo Azael — moteur** : tout `middleware/` + `tests/` + documents de test. ✅ Opérationnel.
+- **ZARANI Kader — agent & interface** : `agent/agent.py` (boucle ReAct Groq avec tool
+  use, gestion d'erreurs API et limite d'itérations) et `interface/demo.py`
+  (CLI interactive avec bascule protégé/non protégé). ✅ Opérationnel — testé
+  en conditions réelles sur les 4 documents piégés (exfiltration, divulgation
+  de prompt système, obfuscation homoglyphes, faux positif contrôlé).
 
 ## Structure
 
