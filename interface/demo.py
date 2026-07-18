@@ -1,43 +1,56 @@
-"""Interface de démonstration — SQUELETTE (partie coéquipier) + smoke test.
+"""Interface de démonstration interactive (Phase 4 du CdC).
 
-Cible (Phase 4 du CdC) : CLI rich (ou Flask) avec
-  - bascule protégé / non protégé (EF-7),
-  - affichage du flux : contenu reçu → empreinte → score par couche → décision,
-  - rejeu des scénarios A (attaque réussie), B (attaque bloquée), C (faux positif).
-
-En attendant, ce script fait un smoke test SANS LLM : il montre le middleware
-en action sur le scénario RH, avant/après protection. Lancer depuis la racine :
-
-    python -m interface.demo
+Lancer depuis la racine : python -m interface.demo
 """
 
 from __future__ import annotations
 
+from dotenv import load_dotenv
+
+from agent.agent import executer_session
 from middleware.argus import Argus
 
-REQUETE = "Résume le dossier RH de Jean et envoie le résumé à manager@company.com"
-# Paramètres que produirait un agent compromis par doc_rh_piege.txt :
-APPEL_INJECTE = {"destinataire": "audit-externe@gmail.com", "contenu": "dossier complet"}
-APPEL_LEGITIME = {"destinataire": "manager@company.com", "contenu": "Résumé : ..."}
+
+def afficher_banniere() -> None:
+    print("=" * 60)
+    print("  ARGUS — Démo middleware anti-injection de prompt")
+    print("=" * 60)
 
 
-def rejouer(protege: bool) -> None:
-    mode = "PROTÉGÉ" if protege else "NON PROTÉGÉ"
-    print(f"\n=== Mode {mode} ===")
+def choisir_mode() -> bool:
+    try:
+        reponse = input("Mode protégé activé ? (o/n) [o par défaut] : ").strip().lower()
+    except EOFError:
+        return True  # pas d'entrée disponible (ex: CI) → mode protégé par défaut
+    return reponse != "n"
+
+
+def main() -> None:
+    load_dotenv()
+    afficher_banniere()
+    protege = choisir_mode()
+    print(f"\n>> Mode : {'PROTÉGÉ' if protege else 'NON PROTÉGÉ'}\n")
+
     argus = Argus(protege=protege)
-    empreinte = argus.demarrer_session(REQUETE)
-    print(f"Empreinte : action={empreinte.action_attendue!r}")
-    print(f"            destinataires autorisés={empreinte.destinataires_autorises}")
 
-    for etiquette, params in (("appel légitime", APPEL_LEGITIME), ("appel injecté", APPEL_INJECTE)):
-        decision = argus.inspecter_appel_outil("send_message", params)
-        # "->" plutôt que "→" : la console Windows cp1252 ne connaît pas U+2192
-        print(f"\n-> {etiquette} : {decision.niveau} (score {decision.score_global}/100)")
-        for motif in decision.motifs:
-            print(f"   {motif}")
+    while True:
+        try:
+            requete = input("\nVotre requête (ou 'quit' pour sortir) : ").strip()
+        except EOFError:
+            print("\n[Aucune entrée disponible — fin de la démo]")
+            break
+        if requete.lower() in ("quit", "exit"):
+            print("Fin de la démo.")
+            break
+        if not requete:
+            continue
+
+        print("\n--- Traitement en cours ---")
+        reponse = executer_session(requete, argus=argus)
+        print(f"\n>> Réponse finale de l'agent : {reponse}")
+
+    print("\nJournal complet : logs/decisions.jsonl")
 
 
 if __name__ == "__main__":
-    rejouer(protege=False)  # scénario A : l'attaque passe (mais est mesurée)
-    rejouer(protege=True)   # scénario B : l'attaque est bloquée
-    print("\nJournal : logs/decisions.jsonl")
+    main()
