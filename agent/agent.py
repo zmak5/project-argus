@@ -2,6 +2,9 @@
 
 from __future__ import annotations
 
+from colorama import Fore, Style, init
+init(autoreset=True)
+
 import json
 import os
 
@@ -112,7 +115,9 @@ def executer_session(requete_utilisateur: str, argus: Argus | None = None) -> st
 
             if argus is not None:
                 decision = argus.inspecter_appel_outil(nom, params)
-                print(f"[ARGUS] Décision : {decision.niveau} (score {decision.score_global}/100)")
+                couleurs = {"AUTORISER": Fore.GREEN, "CONFIRMER": Fore.YELLOW, "BLOQUER": Fore.RED}
+                couleur = couleurs.get(decision.niveau, "")
+                print(f"{couleur}[ARGUS] Décision : {decision.niveau} (score {decision.score_global}/100){Style.RESET_ALL}")
                 for motif in decision.motifs:
                     print(f"         {motif}")
 
